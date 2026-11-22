@@ -30,6 +30,11 @@ export const metadata: Metadata = {
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
   },
+  verification: {
+    other: {
+      "naver-site-verification": "51418dbb49f0d351194e25d26dd9ec3cf1207149",
+    },
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
