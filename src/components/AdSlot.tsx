@@ -14,7 +14,8 @@ export interface AdSlotProps {
   className?: string;
 }
 
-const ADSENSE_CLIENT = process.env.NEXT_PUBLIC_ADSENSE_CLIENT;
+const ADSENSE_CLIENT =
+  process.env.NEXT_PUBLIC_ADSENSE_CLIENT || "ca-pub-6678397214278641";
 
 export function AdSlot({
   slotId,
@@ -22,20 +23,21 @@ export function AdSlot({
   className = "",
 }: AdSlotProps) {
   const pushedRef = useRef(false);
+  const isNumericSlot = /^\d+$/.test(slotId);
   const minHeightClass =
     format === "rectangle" ? "min-h-[250px]" : "min-h-[100px]";
 
   useEffect(() => {
-    if (!ADSENSE_CLIENT || pushedRef.current) return;
+    if (!ADSENSE_CLIENT || !isNumericSlot || pushedRef.current) return;
     pushedRef.current = true;
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
     } catch {
       // 광고 차단기 또는 스크립트 미로드 시 안전하게 무시
     }
-  }, []);
+  }, [isNumericSlot]);
 
-  if (!ADSENSE_CLIENT) {
+  if (!ADSENSE_CLIENT || !isNumericSlot) {
     if (process.env.NODE_ENV === "development") {
       return (
         <div
