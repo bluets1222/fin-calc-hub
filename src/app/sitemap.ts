@@ -31,6 +31,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     { path: "/finance/savings", changeFrequency: "monthly", priority: 0.9 },
+    { path: "/subscription", changeFrequency: "daily", priority: 0.9 },
+    { path: "/real-estate", changeFrequency: "daily", priority: 0.9 },
     { path: "/guide", changeFrequency: "weekly", priority: 0.8 },
     { path: "/about", changeFrequency: "yearly", priority: 0.5 },
     { path: "/privacy", changeFrequency: "yearly", priority: 0.4 },

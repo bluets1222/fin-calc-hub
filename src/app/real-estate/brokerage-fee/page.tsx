@@ -8,6 +8,7 @@ import {
   buildWebAppSchema,
 } from "@/components/seo/JsonLd";
 import { BROKERAGE_FEE } from "@/constants/rates";
+import { CALCULATOR_SEO_GUIDES } from "@/data/calculatorSeoGuides";
 import { BROKERAGE_FEE_FAQS } from "@/lib/calculators/brokerage-fee";
 import { formatKoreanUnit } from "@/lib/format";
 import { SITE_URL } from "@/lib/site";
@@ -55,6 +56,7 @@ export default function BrokerageFeePage() {
         title="부동산 중개보수 · 복비 계산기"
         description="매매·전세·월세 거래 금액에 따른 법정 상한요율과 한도액을 자동 적용하고, 협의 요율과 부가가치세를 반영한 실제 예상 비용을 확인하세요."
         faqs={BROKERAGE_FEE_FAQS}
+        seoGuide={CALCULATOR_SEO_GUIDES["brokerage-fee"]}
         disclaimerOrg="한국공인중개사협회 및 국토교통부 부동산 중개보수 요율표"
         relatedGuide={{
           title: "부동산 복비(중개보수) 상한요율 계산법과 협의·부가세 절약 팁",

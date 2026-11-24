@@ -7,6 +7,7 @@ import {
   buildFaqSchema,
   buildWebAppSchema,
 } from "@/components/seo/JsonLd";
+import { CALCULATOR_SEO_GUIDES } from "@/data/calculatorSeoGuides";
 import { LOAN_INTEREST_FAQS } from "@/lib/calculators/loan-interest";
 import { SITE_URL } from "@/lib/site";
 
@@ -53,6 +54,7 @@ export default function LoanInterestPage() {
         title="대출 이자 및 상환 스케줄 계산기"
         description="원리금균등·원금균등·만기일시상환 3가지 방식의 총 대출이자와 월 납입금을 동시에 비교하고, 거치 기간을 포함한 회차별 상환 스케줄을 확인하세요."
         faqs={LOAN_INTEREST_FAQS}
+        seoGuide={CALCULATOR_SEO_GUIDES["loan-interest"]}
         disclaimerOrg="대출 취급 금융기관(은행·보험사) 및 금융감독원 파인"
         relatedGuide={{
           title: "원리금균등·원금균등·만기일시상환, 총이자와 월 부담 비교 가이드",

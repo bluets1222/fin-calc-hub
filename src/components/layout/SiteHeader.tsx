@@ -114,6 +114,28 @@ export function SiteHeader() {
           </div>
 
           <Link
+            href="/subscription"
+            className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+              pathname.startsWith("/subscription")
+                ? "bg-slate-900 text-white"
+                : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+            }`}
+          >
+            청약알림
+          </Link>
+
+          <Link
+            href="/real-estate"
+            className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+              pathname === "/real-estate" || pathname.startsWith("/complex")
+                ? "bg-slate-900 text-white"
+                : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+            }`}
+          >
+            실거래가 조회
+          </Link>
+
+          <Link
             href="/guide"
             className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
               pathname.startsWith("/guide")
@@ -221,7 +243,29 @@ export function SiteHeader() {
               </div>
             </div>
 
-            <div className="border-t border-slate-100 pt-2">
+            <div className="space-y-1 border-t border-slate-100 pt-2">
+              <Link
+                href="/subscription"
+                onClick={() => setMobileOpen(false)}
+                className={`block rounded-lg px-3 py-2.5 text-sm font-semibold ${
+                  pathname.startsWith("/subscription")
+                    ? "bg-slate-900 text-white"
+                    : "text-slate-800 hover:bg-slate-100"
+                }`}
+              >
+                청약알림 (분양정보)
+              </Link>
+              <Link
+                href="/real-estate"
+                onClick={() => setMobileOpen(false)}
+                className={`block rounded-lg px-3 py-2.5 text-sm font-semibold ${
+                  pathname === "/real-estate" || pathname.startsWith("/complex")
+                    ? "bg-slate-900 text-white"
+                    : "text-slate-800 hover:bg-slate-100"
+                }`}
+              >
+                실거래가 조회 (아파트·오피스텔)
+              </Link>
               <Link
                 href="/guide"
                 onClick={() => setMobileOpen(false)}

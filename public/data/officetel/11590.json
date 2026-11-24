@@ -1,0 +1,140 @@
+{
+  "updatedAt": "2026-11-24T12:06:20.526Z",
+  "sigunguCode": "11590",
+  "sigunguName": "서울 동작구",
+  "count": 11,
+  "items": [
+    {
+      "id": "11590-c27df733",
+      "name": "더포레스트",
+      "dong": "상도1동",
+      "buildYear": 2021,
+      "area": 12.72,
+      "floor": 5,
+      "price": 15000,
+      "dealDate": "2026-11-16",
+      "dealType": "중개거래",
+      "cancelYn": false
+    },
+    {
+      "id": "11590-c27df733",
+      "name": "더포레스트",
+      "dong": "상도1동",
+      "buildYear": 2021,
+      "area": 13.27,
+      "floor": 3,
+      "price": 15000,
+      "dealDate": "2026-11-16",
+      "dealType": "중개거래",
+      "cancelYn": false
+    },
+    {
+      "id": "11590-78df2aca",
+      "name": "대방주상복합빌딩",
+      "dong": "대방동",
+      "buildYear": 2016,
+      "area": 39.64,
+      "floor": 6,
+      "price": 29000,
+      "dealDate": "2026-10-31",
+      "dealType": "중개거래",
+      "cancelYn": false
+    },
+    {
+      "id": "11590-8f4a891e",
+      "name": "(219-11)",
+      "dong": "사당동",
+      "buildYear": 2003,
+      "area": 27.3,
+      "floor": 1,
+      "price": 14500,
+      "dealDate": "2026-10-28",
+      "dealType": "중개거래",
+      "cancelYn": false
+    },
+    {
+      "id": "11590-cc15cd6a",
+      "name": "신라스테이해링턴타워",
+      "dong": "신대방동",
+      "buildYear": 2015,
+      "area": 20.34,
+      "floor": 5,
+      "price": 14000,
+      "dealDate": "2026-10-26",
+      "dealType": "중개거래",
+      "cancelYn": false
+    },
+    {
+      "id": "11590-8f4a891e",
+      "name": "(219-11)",
+      "dong": "사당동",
+      "buildYear": 2003,
+      "area": 25.9,
+      "floor": 4,
+      "price": 16200,
+      "dealDate": "2026-10-09",
+      "dealType": "중개거래",
+      "cancelYn": false
+    },
+    {
+      "id": "11590-d829b7f8",
+      "name": "노량진 드림스퀘어 복합빌딩",
+      "dong": "노량진동",
+      "buildYear": 2020,
+      "area": 24.1329,
+      "floor": 3,
+      "price": 17480,
+      "dealDate": "2026-10-08",
+      "dealType": "직거래",
+      "cancelYn": false
+    },
+    {
+      "id": "11590-02fc9e15",
+      "name": "더원캐슬",
+      "dong": "사당동",
+      "buildYear": 2020,
+      "area": 23.65,
+      "floor": 5,
+      "price": 24900,
+      "dealDate": "2026-10-07",
+      "dealType": "중개거래",
+      "cancelYn": false
+    },
+    {
+      "id": "11590-1b39a9b5",
+      "name": "동작상떼빌",
+      "dong": "신대방동",
+      "buildYear": 2006,
+      "area": 41.48,
+      "floor": 7,
+      "price": 25900,
+      "dealDate": "2026-09-30",
+      "dealType": "중개거래",
+      "cancelYn": false
+    },
+    {
+      "id": "11590-717ae431",
+      "name": "한강큐브스테이트",
+      "dong": "노량진동",
+      "buildYear": 2021,
+      "area": 19.75,
+      "floor": 8,
+      "price": 20000,
+      "dealDate": "2026-09-16",
+      "dealType": "중개거래",
+      "cancelYn": false
+    },
+    {
+      "id": "11590-236b8b85",
+      "name": "캐릭터 그린빌",
+      "dong": "신대방동",
+      "buildYear": 2000,
+      "area": 56.59,
+      "floor": 4,
+      "price": 31000,
+      "dealDate": "2026-09-05",
+      "dealType": "중개거래",
+      "cancelYn": false
+    }
+  ]
+}

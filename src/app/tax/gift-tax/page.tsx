@@ -8,6 +8,7 @@ import {
   buildWebAppSchema,
 } from "@/components/seo/JsonLd";
 import { GIFT_TAX } from "@/constants/rates";
+import { CALCULATOR_SEO_GUIDES } from "@/data/calculatorSeoGuides";
 import { GIFT_TAX_FAQS } from "@/lib/calculators/gift-tax";
 import { formatKoreanUnit } from "@/lib/format";
 import { SITE_URL } from "@/lib/site";
@@ -55,6 +56,7 @@ export default function GiftTaxPage() {
         title="증여세 간편 모의 계산기"
         description="증여자 관계별 10년 공제 한도와 기증여재산 합산액, 누진세율(10~50%), 세대생략 할증 및 자진신고 세액공제(3%)를 반영한 예상 증여세를 계산합니다."
         faqs={GIFT_TAX_FAQS}
+        seoGuide={CALCULATOR_SEO_GUIDES["gift-tax"]}
         disclaimerOrg="국세청 홈택스(Hometax) 및 세무 전문가"
         relatedGuide={{
           title: "증여세 면제한도와 10년 합산 과세, 자진신고 3% 공제 활용법",

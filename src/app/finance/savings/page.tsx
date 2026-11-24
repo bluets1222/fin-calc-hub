@@ -8,6 +8,7 @@ import {
   buildWebAppSchema,
 } from "@/components/seo/JsonLd";
 import { INSURANCE_AND_INCOME_TAX } from "@/constants/rates";
+import { CALCULATOR_SEO_GUIDES } from "@/data/calculatorSeoGuides";
 import { SAVINGS_FAQS } from "@/lib/calculators/savings";
 import { SITE_URL } from "@/lib/site";
 
@@ -54,6 +55,7 @@ export default function SavingsPage() {
         title="예금 · 적금 세후이자 계산기"
         description="정기예금과 정기적금의 단리·월복리 이자를 비교하고, 일반과세(15.4%)·세금우대(1.4%)·비과세 적용 시 세후 만기 수령액과 절세 금액을 확인하세요."
         faqs={SAVINGS_FAQS}
+        seoGuide={CALCULATOR_SEO_GUIDES["savings"]}
         disclaimerOrg="금융감독원 금융상품한눈에 및 가입 금융기관"
         relatedGuide={{
           title: "예금·적금 단리 vs 월복리 차이와 세금우대(1.4%)·비과세 활용법",

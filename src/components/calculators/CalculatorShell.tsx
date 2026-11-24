@@ -1,6 +1,10 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { AdSlot } from "@/components/AdSlot";
+import {
+  CalculatorSeoGuide,
+  type CalculatorSeoGuideData,
+} from "@/components/CalculatorSeoGuide";
 import type { BreadcrumbEntry, FaqEntry } from "@/components/seo/JsonLd";
 import { LAST_UPDATED, TAX_YEAR } from "@/constants/rates";
 
@@ -10,6 +14,7 @@ interface CalculatorShellProps {
   title: string;
   description: string;
   children: ReactNode;
+  seoGuide?: CalculatorSeoGuideData;
   referenceSection: ReactNode;
   faqs: FaqEntry[];
   disclaimerOrg: string;
@@ -26,6 +31,7 @@ export function CalculatorShell({
   title,
   description,
   children,
+  seoGuide,
   referenceSection,
   faqs,
   disclaimerOrg,
@@ -78,6 +84,9 @@ export function CalculatorShell({
 
       {/* Interactive Calculator */}
       <section aria-label="계산기 입력 및 결과">{children}</section>
+
+      {/* SEO & User Guide Section */}
+      {seoGuide && <CalculatorSeoGuide data={seoGuide} />}
 
       {/* Reference / Rate Table */}
       <section className="mt-12 rounded-2xl border border-slate-200 bg-white p-6 shadow-xs sm:p-8">

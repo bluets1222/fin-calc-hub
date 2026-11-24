@@ -8,6 +8,7 @@ import {
   buildWebAppSchema,
 } from "@/components/seo/JsonLd";
 import { INSURANCE_AND_INCOME_TAX } from "@/constants/rates";
+import { CALCULATOR_SEO_GUIDES } from "@/data/calculatorSeoGuides";
 import { NET_PAY_FAQS } from "@/lib/calculators/net-pay";
 import { formatKoreanUnit } from "@/lib/format";
 import { SITE_URL } from "@/lib/site";
@@ -55,6 +56,7 @@ export default function NetPayPage() {
         title="연봉 실수령액 계산기"
         description="세전 연봉(또는 월급)에서 국민연금·건강보험·장기요양보험·고용보험과 근로소득세·지방소득세를 제외한 월 예상 실수령액을 간편하게 확인하세요."
         faqs={NET_PAY_FAQS}
+        seoGuide={CALCULATOR_SEO_GUIDES["net-pay"]}
         disclaimerOrg="국세청 홈택스(근로소득 간이세액표) 및 국민연금공단·건강보험공단"
         relatedGuide={{
           title: "연봉 실수령액을 높이는 비과세·인적공제·4대보험 절세 포인트",

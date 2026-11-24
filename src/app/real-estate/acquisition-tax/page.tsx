@@ -8,6 +8,7 @@ import {
   buildWebAppSchema,
 } from "@/components/seo/JsonLd";
 import { ACQUISITION_TAX } from "@/constants/rates";
+import { CALCULATOR_SEO_GUIDES } from "@/data/calculatorSeoGuides";
 import { ACQUISITION_TAX_FAQS } from "@/lib/calculators/acquisition-tax";
 import { SITE_URL } from "@/lib/site";
 
@@ -54,6 +55,7 @@ export default function AcquisitionTaxPage() {
         title="부동산 취득세 계산기"
         description="주택·오피스텔 매수 시 납부해야 할 취득세, 지방교육세, 농어촌특별세 합계를 보유 주택 수와 생애최초 감면 조건에 맞춰 정확하게 산출합니다."
         faqs={ACQUISITION_TAX_FAQS}
+        seoGuide={CALCULATOR_SEO_GUIDES["acquisition-tax"]}
         disclaimerOrg="위택스(WETAX) 및 관할 시·군·구청 세무과"
         relatedGuide={{
           title: "생애최초 주택 취득세 감면 조건과 1~3주택 세율 총정리",

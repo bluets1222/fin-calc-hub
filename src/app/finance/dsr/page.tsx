@@ -8,6 +8,7 @@ import {
   buildWebAppSchema,
 } from "@/components/seo/JsonLd";
 import { DSR_LIMITS } from "@/constants/rates";
+import { CALCULATOR_SEO_GUIDES } from "@/data/calculatorSeoGuides";
 import { DSR_FAQS } from "@/lib/calculators/dsr";
 import { SITE_URL } from "@/lib/site";
 
@@ -54,6 +55,7 @@ export default function DsrPage() {
         title="주담대·신용대출 DSR 및 월 상환액 계산기"
         description="세전 연소득과 기존 대출, 스트레스 DSR 가산금리를 반영해 1금융권(40%)·2금융권(50%) 한도 대비 예상 DSR 비율과 월 상환액을 간편하게 점검하세요."
         faqs={DSR_FAQS}
+        seoGuide={CALCULATOR_SEO_GUIDES["dsr"]}
         disclaimerOrg="금융감독원 및 대출 취급 금융기관(은행·보험사 등)"
         relatedGuide={{
           title: "스트레스 DSR 시대, 주담대·신용대출 한도를 높이는 실전 전략",

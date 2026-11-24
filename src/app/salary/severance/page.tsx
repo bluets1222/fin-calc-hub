@@ -7,6 +7,7 @@ import {
   buildFaqSchema,
   buildWebAppSchema,
 } from "@/components/seo/JsonLd";
+import { CALCULATOR_SEO_GUIDES } from "@/data/calculatorSeoGuides";
 import { SEVERANCE_FAQS } from "@/lib/calculators/severance";
 import { SITE_URL } from "@/lib/site";
 
@@ -53,6 +54,7 @@ export default function SeverancePage() {
         title="퇴직금 모의 계산기"
         description="입·퇴사일 기준 재직일수와 1일 평균임금(상여금·연차수당 포함)을 계산하고, 근속연수공제를 반영한 퇴직소득세 차감 후 예상 실수령 퇴직금을 산출합니다."
         faqs={SEVERANCE_FAQS}
+        seoGuide={CALCULATOR_SEO_GUIDES["severance"]}
         disclaimerOrg="고용노동부 퇴직금 계산기 및 국세청 홈택스(퇴직소득세)"
         relatedGuide={{
           title: "퇴직금 계산 공식(평균임금 vs 통상임금)과 퇴직소득세 절세법",

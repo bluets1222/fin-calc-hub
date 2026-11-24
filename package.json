@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "sync:real-estate": "node scripts/sync-real-estate.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
@@ -19,8 +20,10 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^18.0.10",
     "eslint": "^9",
     "eslint-config-next": "16.4.6",
+    "fast-xml-parser": "^5.12.1",
     "tailwindcss": "4.3.3",
     "typescript": "^5"
   }

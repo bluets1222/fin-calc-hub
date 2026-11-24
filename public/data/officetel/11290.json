@@ -1,0 +1,104 @@
+{
+  "updatedAt": "2026-11-24T12:06:13.934Z",
+  "sigunguCode": "11290",
+  "sigunguName": "서울 성북구",
+  "count": 8,
+  "items": [
+    {
+      "id": "11290-6783e128",
+      "name": "해피엔딩 오피스텔",
+      "dong": "동소문동6가",
+      "buildYear": 2003,
+      "area": 34.03,
+      "floor": 6,
+      "price": 17500,
+      "dealDate": "2026-11-13",
+      "dealType": "중개거래",
+      "cancelYn": false
+    },
+    {
+      "id": "11290-07159799",
+      "name": "벨라미아 오피스텔",
+      "dong": "동선동4가",
+      "buildYear": 2011,
+      "area": 21.77,
+      "floor": 3,
+      "price": 12000,
+      "dealDate": "2026-11-07",
+      "dealType": "중개거래",
+      "cancelYn": false
+    },
+    {
+      "id": "11290-df1ca1a8",
+      "name": "신앤김",
+      "dong": "하월곡동",
+      "buildYear": 2022,
+      "area": 74.6,
+      "floor": 2,
+      "price": 43200,
+      "dealDate": "2026-10-29",
+      "dealType": "중개거래",
+      "cancelYn": false
+    },
+    {
+      "id": "11290-19ddd434",
+      "name": "HK팰리스",
+      "dong": "하월곡동",
+      "buildYear": 2017,
+      "area": 65.59,
+      "floor": 5,
+      "price": 34900,
+      "dealDate": "2026-10-24",
+      "dealType": "중개거래",
+      "cancelYn": false
+    },
+    {
+      "id": "11290-19ddd434",
+      "name": "HK팰리스",
+      "dong": "하월곡동",
+      "buildYear": 2017,
+      "area": 65.59,
+      "floor": 4,
+      "price": 33750,
+      "dealDate": "2026-10-24",
+      "dealType": "중개거래",
+      "cancelYn": false
+    },
+    {
+      "id": "11290-b7e4e806",
+      "name": "명남더블레스",
+      "dong": "하월곡동",
+      "buildYear": 2019,
+      "area": 43.47,
+      "floor": 4,
+      "price": 25800,
+      "dealDate": "2026-10-16",
+      "dealType": "중개거래",
+      "cancelYn": false
+    },
+    {
+      "id": "11290-7b6aa483",
+      "name": "돈암동 메트로빌",
+      "dong": "동소문동6가",
+      "buildYear": 2003,
+      "area": 30.3,
+      "floor": 4,
+      "price": 20500,
+      "dealDate": "2026-09-15",
+      "dealType": "중개거래",
+      "cancelYn": false
+    },
+    {
+      "id": "11290-4dc39863",
+      "name": "성북웅진베어스빌",
+      "dong": "하월곡동",
+      "buildYear": 2021,
+      "area": 33.65,
+      "floor": 4,
+      "price": 31300,
+      "dealDate": "2026-09-05",
+      "dealType": "중개거래",
+      "cancelYn": false
+    }
+  ]
+}
