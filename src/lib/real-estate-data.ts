@@ -45,10 +45,10 @@ export interface SubscriptionItem {
 export interface SearchIndexItem {
   id: string;
   name: string;
-  region: string;
+  sido: string;
+  sigungu: string;
   dong: string;
   latestPrice: number;
-  dealDate: string;
   type: "apt" | "officetel" | "sub";
 }
 
@@ -66,7 +66,10 @@ export interface ComplexDetail {
   sigunguName: string;
   dongName: string;
   name: string;
+  buildYear: number;
   latestPrice: number; // 만원
+  prevPrice: number | null; // 직전 거래가 (만원)
+  priceDiffFromPrev: number | null; // 직전 거래 대비 증감액 (만원)
   latestArea: number; // ㎡
   latestDealDate: string;
   areaList: number[];
@@ -170,6 +173,12 @@ export async function getComplexDetail(
   const validTrades = trades.filter((t) => !t.cancelYn && t.price > 0);
   const referenceTrades = validTrades.length > 0 ? validTrades : trades;
   const latest = referenceTrades[0];
+  const prevTrade = referenceTrades.length > 1 ? referenceTrades[1] : null;
+  const prevPrice = prevTrade ? prevTrade.price : null;
+  const priceDiffFromPrev =
+    prevPrice !== null ? latest.price - prevPrice : null;
+  const buildYear =
+    referenceTrades.find((t) => (t.buildYear ?? 0) > 0)?.buildYear ?? 0;
 
   // 전용면적 목록 (중복 제거, 오름차순)
   const areaSet = new Set<number>();
@@ -240,7 +249,10 @@ export async function getComplexDetail(
     sigunguName: fileData.sigunguName,
     dongName: latest.dong,
     name: latest.name,
+    buildYear,
     latestPrice: latest.price,
+    prevPrice,
+    priceDiffFromPrev,
     latestArea: latest.area,
     latestDealDate: latest.dealDate,
     areaList,

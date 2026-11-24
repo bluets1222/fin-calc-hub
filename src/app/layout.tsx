@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { Suspense } from "react";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { SiteHeader } from "@/components/layout/SiteHeader";
@@ -52,7 +53,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             crossOrigin="anonymous"
           />
         )}
-        <SiteHeader />
+        <Suspense
+          fallback={<div className="h-16 border-b border-slate-200 bg-white" />}
+        >
+          <SiteHeader />
+        </Suspense>
         <main className="flex-1">{children}</main>
         <SiteFooter />
         <Analytics />

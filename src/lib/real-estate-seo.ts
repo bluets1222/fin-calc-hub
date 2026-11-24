@@ -105,8 +105,11 @@ export function buildComplexSeoGuide(
         ? `${detail.dongName} 평균 대비 약 ${detail.diffPercentFromDong}% 높은 프리미엄 시세`
         : `${detail.dongName} 평균 대비 약 ${Math.abs(detail.diffPercentFromDong)}% 낮은 합리적 시세`;
 
+  const buildYearText =
+    detail.buildYear > 0 ? `${detail.buildYear}년 준공 ` : "";
+
   const fundSummaryText =
-    `${detail.sigunguName} ${detail.dongName}에 위치한 ${detail.name} (${typeLabel})의 최근 실거래가는 전용 ${detail.latestArea}㎡(약 ${pyeong}평) 기준 ${priceText}입니다. ` +
+    `${detail.sigunguName} ${detail.dongName}에 위치한 ${buildYearText}${detail.name} (${typeLabel})의 최근 실거래가는 전용 ${detail.latestArea}㎡(약 ${pyeong}평) 기준 ${priceText}입니다. ` +
     `이는 ${diffText}입니다. 해당 금액으로 1주택 매수 시 예상 취득세 합계는 약 ${formatKRW(acq.totalTax)}(세율 ${acq.totalRate}%)이며, ` +
     `매매가의 60%(${formatKoreanUnit(assumedLoan)})를 연 4.2%·30년 만기(스트레스 DSR +0.75%)로 대출받을 경우 월 평균 상환액은 약 ${formatKRW(dsrSample.actualMonthlyPaymentAvg)}, ` +
     `1금융권 DSR 40% 통과를 위한 권장 세전 연소득은 약 ${formatKoreanUnit(requiredIncomeWon)} 수준입니다.`;

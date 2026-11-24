@@ -112,7 +112,7 @@ async function SubscriptionContent({
           </Link>
           <span>/</span>
           <Link href="/subscription" className="hover:text-slate-900 hover:underline">
-            청약알림
+            청약 조회
           </Link>
           <span>/</span>
           <span className="font-semibold text-slate-800">{sub.name}</span>

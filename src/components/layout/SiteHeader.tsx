@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
 import {
   REAL_ESTATE_TAX_NAV,
   SALARY_FINANCE_NAV,
@@ -11,22 +10,26 @@ import {
 
 export function SiteHeader() {
   const pathname = usePathname();
-  const [mobileOpen, setMobileOpen] = useState(false);
 
-  const isRealEstateGroup = REAL_ESTATE_TAX_NAV.some(
-    (item) => pathname === item.href
-  );
-  const isSalaryFinanceGroup = SALARY_FINANCE_NAV.some(
-    (item) => pathname === item.href
-  );
+  const isSubscriptionActive = pathname.startsWith("/subscription");
+  const isTaxActive =
+    pathname === "/real-estate/acquisition-tax" ||
+    pathname === "/real-estate/brokerage-fee" ||
+    pathname.startsWith("/tax");
+  const isRealEstateLookupActive =
+    pathname === "/real-estate" ||
+    (pathname.startsWith("/real-estate/") && !isTaxActive) ||
+    pathname.startsWith("/complex");
+  const isFinanceActive =
+    pathname.startsWith("/finance") || pathname.startsWith("/salary");
 
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/85">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:h-16 sm:px-6">
+        {/* Brand Logo */}
         <Link
           href="/"
           className="flex items-center gap-2.5 text-slate-900 transition-opacity hover:opacity-85"
-          onClick={() => setMobileOpen(false)}
         >
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-sm font-bold text-white shadow-sm">
             BF
@@ -36,251 +39,176 @@ export function SiteHeader() {
               {SITE_NAME}
             </span>
             <span className="text-[11px] font-medium leading-tight text-slate-500">
-              부동산·세금·금융 계산기
+              청약·실거래·세금·금융
             </span>
           </div>
         </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden items-center gap-1.5 md:flex" aria-label="주 메뉴">
-          {/* Group 1: 부동산·세금 */}
-          <div className="group relative">
-            <button
-              type="button"
-              className={`inline-flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                isRealEstateGroup
-                  ? "bg-slate-900 text-white"
-                  : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
-              }`}
-            >
-              <span>부동산·세금</span>
-              <span className="text-[10px] opacity-70">▼</span>
-            </button>
-            <div className="invisible absolute left-0 top-full z-50 w-60 pt-1.5 opacity-0 transition-all group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
-              <div className="rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg">
-                {REAL_ESTATE_TAX_NAV.map((item) => {
-                  const active = pathname === item.href;
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={`flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                        active
-                          ? "bg-slate-900 text-white"
-                          : "text-slate-700 hover:bg-slate-100"
-                      }`}
-                    >
-                      <span>{item.label}</span>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
-          {/* Group 2: 연봉·금융 */}
-          <div className="group relative">
-            <button
-              type="button"
-              className={`inline-flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                isSalaryFinanceGroup
-                  ? "bg-slate-900 text-white"
-                  : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
-              }`}
-            >
-              <span>연봉·금융</span>
-              <span className="text-[10px] opacity-70">▼</span>
-            </button>
-            <div className="invisible absolute left-0 top-full z-50 w-60 pt-1.5 opacity-0 transition-all group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
-              <div className="rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg">
-                {SALARY_FINANCE_NAV.map((item) => {
-                  const active = pathname === item.href;
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={`flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                        active
-                          ? "bg-slate-900 text-white"
-                          : "text-slate-700 hover:bg-slate-100"
-                      }`}
-                    >
-                      <span>{item.label}</span>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
+        {/* Desktop Primary 4-Tab Navigation: 탐색 -> 조회 -> 세금 -> 금융 */}
+        <nav
+          className="hidden items-center gap-1 md:flex"
+          aria-label="주 메뉴"
+        >
+          {/* 1) 청약 조회 */}
           <Link
             href="/subscription"
-            className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-              pathname.startsWith("/subscription")
-                ? "bg-slate-900 text-white"
-                : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+            className={`border-b-2 px-3.5 py-2 text-sm transition-colors ${
+              isSubscriptionActive
+                ? "border-slate-900 font-bold text-slate-900"
+                : "border-transparent font-medium text-slate-600 hover:text-slate-900"
             }`}
           >
-            청약알림
+            청약 조회
           </Link>
 
+          {/* 2) 실거래가 조회 */}
           <Link
             href="/real-estate"
-            className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-              pathname === "/real-estate" || pathname.startsWith("/complex")
-                ? "bg-slate-900 text-white"
-                : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+            className={`border-b-2 px-3.5 py-2 text-sm transition-colors ${
+              isRealEstateLookupActive
+                ? "border-slate-900 font-bold text-slate-900"
+                : "border-transparent font-medium text-slate-600 hover:text-slate-900"
             }`}
           >
             실거래가 조회
           </Link>
 
-          <Link
-            href="/guide"
-            className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-              pathname.startsWith("/guide")
-                ? "bg-blue-50 text-blue-700"
-                : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
-            }`}
-          >
-            세무·금융 가이드
-          </Link>
+          {/* 3) 부동산 세금 (취득세·중개보수·증여세) */}
+          <div className="group relative">
+            <Link
+              href="/real-estate/acquisition-tax"
+              className={`inline-flex items-center gap-1 border-b-2 px-3.5 py-2 text-sm transition-colors ${
+                isTaxActive
+                  ? "border-slate-900 font-bold text-slate-900"
+                  : "border-transparent font-medium text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              <span>부동산 세금</span>
+              <span className="text-[10px] opacity-60">▼</span>
+            </Link>
+            <div className="invisible absolute left-0 top-full z-50 w-56 pt-1.5 opacity-0 transition-all group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+              <div className="rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg">
+                {REAL_ESTATE_TAX_NAV.filter(
+                  (i) => i.href !== "/finance/dsr"
+                ).map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`block rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                      pathname === item.href
+                        ? "bg-slate-900 text-white"
+                        : "text-slate-700 hover:bg-slate-100"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* 4) 연봉·금융 (DSR·대출·연봉·퇴직·예적금) */}
+          <div className="group relative">
+            <Link
+              href="/finance/dsr"
+              className={`inline-flex items-center gap-1 border-b-2 px-3.5 py-2 text-sm transition-colors ${
+                isFinanceActive
+                  ? "border-slate-900 font-bold text-slate-900"
+                  : "border-transparent font-medium text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              <span>연봉·금융</span>
+              <span className="text-[10px] opacity-60">▼</span>
+            </Link>
+            <div className="invisible absolute left-0 top-full z-50 w-56 pt-1.5 opacity-0 transition-all group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+              <div className="rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg">
+                <Link
+                  href="/finance/dsr"
+                  className={`block rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                    pathname === "/finance/dsr"
+                      ? "bg-slate-900 text-white"
+                      : "text-slate-700 hover:bg-slate-100"
+                  }`}
+                >
+                  DSR·월 상환액 계산기
+                </Link>
+                {SALARY_FINANCE_NAV.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`block rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                      pathname === item.href
+                        ? "bg-slate-900 text-white"
+                        : "text-slate-700 hover:bg-slate-100"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
         </nav>
 
-        {/* Mobile Toggle */}
-        <button
-          type="button"
-          className="inline-flex items-center justify-center rounded-lg border border-slate-200 p-2 text-slate-600 hover:bg-slate-100 hover:text-slate-900 md:hidden"
-          onClick={() => setMobileOpen((prev) => !prev)}
-          aria-expanded={mobileOpen}
-          aria-label="메뉴 열기"
+        {/* Secondary Guide Link */}
+        <Link
+          href="/guide"
+          className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors sm:text-sm ${
+            pathname.startsWith("/guide")
+              ? "bg-blue-50 text-blue-700"
+              : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
+          }`}
         >
-          <svg
-            className="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.8}
-            stroke="currentColor"
-          >
-            {mobileOpen ? (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            ) : (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-              />
-            )}
-          </svg>
-        </button>
+          세무·금융 가이드
+        </Link>
       </div>
 
-      {/* Mobile Navigation */}
-      {mobileOpen && (
-        <div className="max-h-[80vh] overflow-y-auto border-t border-slate-200 bg-white px-4 py-4 md:hidden">
-          <nav className="flex flex-col gap-4" aria-label="모바일 메뉴">
-            <div>
-              <p className="mb-1.5 px-2 text-xs font-bold uppercase tracking-wider text-slate-400">
-                부동산 · 세금 계산기
-              </p>
-              <div className="flex flex-col gap-1">
-                {REAL_ESTATE_TAX_NAV.map((item) => {
-                  const active = pathname === item.href;
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={() => setMobileOpen(false)}
-                      className={`flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium ${
-                        active
-                          ? "bg-slate-900 text-white"
-                          : "text-slate-700 hover:bg-slate-100"
-                      }`}
-                    >
-                      <span>{item.label}</span>
-                      <span
-                        className={`text-xs ${active ? "text-slate-300" : "text-slate-400"}`}
-                      >
-                        {item.category}
-                      </span>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div>
-              <p className="mb-1.5 px-2 text-xs font-bold uppercase tracking-wider text-slate-400">
-                연봉 · 금융 계산기
-              </p>
-              <div className="flex flex-col gap-1">
-                {SALARY_FINANCE_NAV.map((item) => {
-                  const active = pathname === item.href;
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={() => setMobileOpen(false)}
-                      className={`flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium ${
-                        active
-                          ? "bg-slate-900 text-white"
-                          : "text-slate-700 hover:bg-slate-100"
-                      }`}
-                    >
-                      <span>{item.label}</span>
-                      <span
-                        className={`text-xs ${active ? "text-slate-300" : "text-slate-400"}`}
-                      >
-                        {item.category}
-                      </span>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="space-y-1 border-t border-slate-100 pt-2">
-              <Link
-                href="/subscription"
-                onClick={() => setMobileOpen(false)}
-                className={`block rounded-lg px-3 py-2.5 text-sm font-semibold ${
-                  pathname.startsWith("/subscription")
-                    ? "bg-slate-900 text-white"
-                    : "text-slate-800 hover:bg-slate-100"
-                }`}
-              >
-                청약알림 (분양정보)
-              </Link>
-              <Link
-                href="/real-estate"
-                onClick={() => setMobileOpen(false)}
-                className={`block rounded-lg px-3 py-2.5 text-sm font-semibold ${
-                  pathname === "/real-estate" || pathname.startsWith("/complex")
-                    ? "bg-slate-900 text-white"
-                    : "text-slate-800 hover:bg-slate-100"
-                }`}
-              >
-                실거래가 조회 (아파트·오피스텔)
-              </Link>
-              <Link
-                href="/guide"
-                onClick={() => setMobileOpen(false)}
-                className={`block rounded-lg px-3 py-2.5 text-sm font-semibold ${
-                  pathname.startsWith("/guide")
-                    ? "bg-blue-50 text-blue-700"
-                    : "text-slate-800 hover:bg-slate-100"
-                }`}
-              >
-                세무·금융 가이드 전체 보기
-              </Link>
-            </div>
-          </nav>
-        </div>
-      )}
+      {/* Mobile Sticky 4-Tab Bar (햄버거 메뉴 없이 한 줄로 바로 터치 가능) */}
+      <nav
+        className="grid grid-cols-4 border-t border-slate-100 bg-white md:hidden"
+        aria-label="모바일 빠른 탭"
+      >
+        <Link
+          href="/subscription"
+          className={`flex items-center justify-center border-b-2 py-2.5 text-xs transition-colors ${
+            isSubscriptionActive
+              ? "border-slate-900 font-bold text-slate-900"
+              : "border-transparent font-medium text-slate-500"
+          }`}
+        >
+          청약 조회
+        </Link>
+        <Link
+          href="/real-estate"
+          className={`flex items-center justify-center border-b-2 py-2.5 text-xs transition-colors ${
+            isRealEstateLookupActive
+              ? "border-slate-900 font-bold text-slate-900"
+              : "border-transparent font-medium text-slate-500"
+          }`}
+        >
+          실거래가
+        </Link>
+        <Link
+          href="/real-estate/acquisition-tax"
+          className={`flex items-center justify-center border-b-2 py-2.5 text-xs transition-colors ${
+            isTaxActive
+              ? "border-slate-900 font-bold text-slate-900"
+              : "border-transparent font-medium text-slate-500"
+          }`}
+        >
+          부동산 세금
+        </Link>
+        <Link
+          href="/finance/dsr"
+          className={`flex items-center justify-center border-b-2 py-2.5 text-xs transition-colors ${
+            isFinanceActive
+              ? "border-slate-900 font-bold text-slate-900"
+              : "border-transparent font-medium text-slate-500"
+          }`}
+        >
+          연봉·금융
+        </Link>
+      </nav>
     </header>
   );
 }

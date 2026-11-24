@@ -2,13 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { RealEstateSearchClient } from "@/components/real-estate/RealEstateSearchClient";
 import { JsonLd, buildBreadcrumbSchema } from "@/components/seo/JsonLd";
-import { getSearchIndexData } from "@/lib/real-estate-data";
 import { SITE_URL } from "@/lib/site";
 
 const PAGE_PATH = "/real-estate";
-const PAGE_TITLE = "아파트·오피스텔 실거래가 조회 (국토교통부 연동)";
+const PAGE_TITLE = "전국 아파트·오피스텔 실거래가 조회 (국토교통부 연동)";
 const PAGE_DESCRIPTION =
-  "서울·경기 주요 시군구 아파트 및 오피스텔 최근 3개월 실거래가를 단지명·지역별로 검색하고, 해당 가격 기준 취득세와 DSR 대출 한도를 바로 계산하세요.";
+  "전국 17개 시·도 아파트 및 오피스텔 최근 6개월 실거래가를 시군구·단지·평형별로 조회하고, 해당 가격 기준 취득세와 DSR 대출 한도를 바로 계산하세요.";
 
 export const metadata: Metadata = {
   title: PAGE_TITLE,
@@ -22,8 +21,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RealEstateSearchPage() {
-  const items = await getSearchIndexData();
+export default function RealEstateSearchPage() {
   const breadcrumbs = [
     { name: "홈", path: "/" },
     { name: "실거래가 조회", path: PAGE_PATH },
@@ -37,14 +35,15 @@ export default async function RealEstateSearchPage() {
         <header className="mb-8 flex flex-col justify-between gap-4 border-b border-slate-200 pb-6 sm:flex-row sm:items-end">
           <div className="space-y-2">
             <span className="inline-flex rounded-full bg-slate-900 px-3 py-1 text-xs font-semibold text-white">
-              국토교통부 실거래가 연동
+              전국 17개 시·도 · 국토교통부 최근 6개월 실거래가
             </span>
             <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-              아파트 · 오피스텔 실거래가 조회
+              전국 아파트 · 오피스텔 실거래가 조회
             </h1>
             <p className="text-sm text-slate-600">
-              단지명이나 지역을 검색해 최근 실거래 추이를 확인하고, 매수 시
-              취득세·DSR·중개보수를 즉시 시뮬레이션하세요.
+              시·도와 시군구를 선택하거나 단지명을 검색해 최근 6개월 실거래
+              추이를 확인하고, 매수 시 취득세·DSR·중개보수를 즉시
+              시뮬레이션하세요.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -63,7 +62,7 @@ export default async function RealEstateSearchPage() {
           </div>
         </header>
 
-        <RealEstateSearchClient items={items} />
+        <RealEstateSearchClient />
       </div>
     </>
   );

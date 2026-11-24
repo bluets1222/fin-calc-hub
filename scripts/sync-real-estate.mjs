@@ -10,7 +10,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.resolve(__dirname, "..");
 
-// 로컬 실행 시 .env.local 로드 (GitHub Actions에서는 Secrets 환경변수 사용)
 dotenv.config({ path: path.join(ROOT_DIR, ".env.local") });
 dotenv.config({ path: path.join(ROOT_DIR, ".env") });
 
@@ -25,6 +24,13 @@ if (!API_KEY) {
 const REQUEST_DELAY_MS = 150;
 const MAX_RETRIES = 3;
 const BASE_BACKOFF_MS = 500;
+const RETENTION_MONTHS = 6;
+
+// 기본값: 당월 + 직전 1개월(총 2개월) 호출 (필요 시 --months=6 옵션 지원)
+const monthsArg = process.argv.find((a) => a.startsWith("--months="));
+const FETCH_MONTHS = monthsArg
+  ? Math.max(1, Math.min(12, Number(monthsArg.split("=")[1]) || 2))
+  : 2;
 
 const DATA_DIR = path.join(ROOT_DIR, "public", "data");
 const APT_DIR = path.join(DATA_DIR, "apt");
@@ -42,9 +48,6 @@ function buildServiceKeyParam(rawKey) {
   return rawKey.includes("%") ? rawKey : encodeURIComponent(rawKey);
 }
 
-/**
- * 150ms 딜레이 + 최대 3회 Exponential Backoff 재시도 fetch 래퍼
- */
 async function fetchWithRetry(url, label) {
   await sleep(REQUEST_DELAY_MS);
 
@@ -55,6 +58,7 @@ async function fetchWithRetry(url, label) {
         headers: {
           Accept: "application/json, application/xml, text/xml, */*",
         },
+        signal: AbortSignal.timeout(15000),
       });
 
       if (response.status === 429 || response.status >= 500) {
@@ -92,7 +96,7 @@ function getKstTodayString() {
   return kst.toISOString().slice(0, 10);
 }
 
-function getRecentMonths(count = 3) {
+function getRecentMonths(count = 2) {
   const now = new Date();
   const kst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
   const year = kst.getUTCFullYear();
@@ -106,6 +110,20 @@ function getRecentMonths(count = 3) {
     result.push(`${yyyy}${mm}`);
   }
   return result;
+}
+
+/**
+ * 최근 6개월 보존 기준일 (YYYY-MM-01)
+ */
+function getRetentionCutoffDate(months = RETENTION_MONTHS) {
+  const now = new Date();
+  const kst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+  const d = new Date(
+    Date.UTC(kst.getUTCFullYear(), kst.getUTCMonth() - (months - 1), 1)
+  );
+  const yyyy = d.getUTCFullYear();
+  const mm = String(d.getUTCMonth() + 1).padStart(2, "0");
+  return `${yyyy}-${mm}-01`;
 }
 
 function diffDays(targetDateStr, baseDateStr) {
@@ -151,6 +169,39 @@ function makeRouteComplexId(type, sigunguCode, dong, name) {
   const safeDong = dong.replace(/\//g, "_").trim();
   const safeName = name.replace(/\//g, "_").trim();
   return `${type}-${sigunguCode}-${safeDong}--${safeName}`;
+}
+
+async function readExistingJson(filePath) {
+  try {
+    const raw = await fs.readFile(filePath, "utf8");
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * 기존 데이터 + 신규 데이터 증분 병합(Upsert) 및 최근 6개월 필터링
+ * 중복 키: 거래일 + 단지명 + 법정동 + 전용면적 + 층 + 거래금액
+ */
+function mergeAndPruneTrades(existingItems, newItems, cutoffDate) {
+  const map = new Map();
+
+  for (const item of existingItems ?? []) {
+    if (!item?.dealDate || item.dealDate < cutoffDate) continue;
+    const dedupKey = `${item.dealDate}|${item.name}|${item.dong}|${item.area}|${item.floor}|${item.price}`;
+    map.set(dedupKey, item);
+  }
+
+  for (const item of newItems ?? []) {
+    if (!item?.dealDate || item.dealDate < cutoffDate) continue;
+    const dedupKey = `${item.dealDate}|${item.name}|${item.dong}|${item.area}|${item.floor}|${item.price}`;
+    map.set(dedupKey, item);
+  }
+
+  const merged = Array.from(map.values());
+  merged.sort((a, b) => b.dealDate.localeCompare(a.dealDate));
+  return merged;
 }
 
 /**
@@ -230,18 +281,15 @@ async function syncSubscriptions() {
     return a.applyStart.localeCompare(b.applyStart);
   });
 
+  // Minify 저장
   await fs.writeFile(
     path.join(DATA_DIR, "subscriptions.json"),
-    JSON.stringify(
-      {
-        updatedAt: new Date().toISOString(),
-        baseDate: todayStr,
-        count: filtered.length,
-        items: filtered,
-      },
-      null,
-      2
-    ),
+    JSON.stringify({
+      updatedAt: new Date().toISOString(),
+      baseDate: todayStr,
+      count: filtered.length,
+      items: filtered,
+    }),
     "utf8"
   );
 
@@ -249,11 +297,9 @@ async function syncSubscriptions() {
   return filtered;
 }
 
-/**
- * XML 또는 JSON 실거래가 응답 파싱 공통 헬퍼
- */
 function extractRtmsItems(rawText) {
   const trimmed = rawText.trim();
+  if (!trimmed) return [];
   if (trimmed.startsWith("{")) {
     const json = JSON.parse(trimmed);
     const items = json?.response?.body?.items?.item ?? json?.data ?? [];
@@ -272,34 +318,48 @@ function extractRtmsItems(rawText) {
 }
 
 /**
- * 2. 국토교통부 아파트매매 실거래가 상세 자료 (RTMSDataSvcAptTradeDev)
+ * 2. 국토부 아파트/오피스텔 실거래가 증분 수집 공통 함수
  */
-async function syncAptTrades(months) {
+async function syncTradeCategory(kind, months, cutoffDate) {
+  const isApt = kind === "apt";
+  const label = isApt ? "아파트" : "오피스텔";
+  const outDir = isApt ? APT_DIR : OFFICETEL_DIR;
+  const endpoint = isApt
+    ? "https://apis.data.go.kr/1613000/RTMSDataSvcAptTradeDev/getRTMSDataSvcAptTradeDev"
+    : "https://apis.data.go.kr/1613000/RTMSDataSvcOffiTrade/getRTMSDataSvcOffiTrade";
+
   console.log(
-    `[2/3] 국토부 아파트 실거래가 수집 시작 (${SIGUNGU_CODES.length}개 시군구 × ${months.length}개월)...`
+    `[${isApt ? "2/3" : "3/3"}] 국토부 ${label} 실거래가 증분 수집 시작 (전국 ${SIGUNGU_CODES.length}개 시군구 × ${months.length}개월)...`
   );
+
   const keyParam = buildServiceKeyParam(API_KEY);
   const searchCandidates = [];
 
-  for (const sigungu of SIGUNGU_CODES) {
-    const records = [];
+  for (const areaInfo of SIGUNGU_CODES) {
+    const filePath = path.join(outDir, `${areaInfo.code}.json`);
+    const existingFile = await readExistingJson(filePath);
+    const newRecords = [];
 
     for (const dealYmd of months) {
-      const url =
-        `https://apis.data.go.kr/1613000/RTMSDataSvcAptTradeDev/getRTMSDataSvcAptTradeDev` +
-        `?serviceKey=${keyParam}&LAWD_CD=${sigungu.code}&DEAL_YMD=${dealYmd}&pageNo=1&numOfRows=1000`;
+      const url = `${endpoint}?serviceKey=${keyParam}&LAWD_CD=${areaInfo.code}&DEAL_YMD=${dealYmd}&pageNo=1&numOfRows=1000`;
 
       try {
         const text = await fetchWithRetry(
           url,
-          `APT ${sigungu.name}(${sigungu.code}) ${dealYmd}`
+          `${kind.toUpperCase()} ${areaInfo.sido} ${areaInfo.sigungu}(${areaInfo.code}) ${dealYmd}`
         );
         const items = extractRtmsItems(text);
 
         for (const item of items) {
-          const name = String(item.aptNm ?? item.아파트 ?? "").trim();
+          const name = String(
+            isApt
+              ? (item.aptNm ?? item.아파트 ?? "")
+              : (item.offiNm ?? item.단지 ?? "")
+          ).trim();
           const dong = String(item.umdNm ?? item.법정동 ?? "").trim();
-          const jibun = String(item.jibun ?? item.지번 ?? "").trim();
+          const jibun = isApt
+            ? String(item.jibun ?? item.지번 ?? "").trim()
+            : undefined;
           const buildYear = parseIntClean(item.buildYear ?? item.건축년도);
           const area = parseFloatClean(item.excluUseAr ?? item.전용면적);
           const floor = parseIntClean(item.floor ?? item.층);
@@ -311,16 +371,15 @@ async function syncAptTrades(months) {
           const dealType = String(item.dealingGbn ?? item.거래유형 ?? "").trim();
           const cdealType = String(item.cdealType ?? item.해제여부 ?? "").trim();
           const cancelYn = cdealType === "O" || cdealType === "Y";
-          const aptSeq = String(item.aptSeq ?? "").trim();
-          const id = `${sigungu.code}-${aptSeq || makeShortHash(`${dong}|${name}`)}`;
+          const aptSeq = isApt ? String(item.aptSeq ?? "").trim() : "";
 
           if (!name || price <= 0) continue;
 
-          records.push({
-            id,
+          newRecords.push({
+            id: `${areaInfo.code}-${aptSeq || makeShortHash(`${dong}|${name}`)}`,
             name,
             dong,
-            jibun,
+            ...(jibun !== undefined ? { jibun } : {}),
             buildYear,
             area,
             floor,
@@ -332,155 +391,56 @@ async function syncAptTrades(months) {
         }
       } catch (err) {
         console.error(
-          `[ERROR] APT ${sigungu.name}(${sigungu.code}) ${dealYmd} 실패:`,
+          `[ERROR] ${kind.toUpperCase()} ${areaInfo.sido} ${areaInfo.sigungu}(${areaInfo.code}) ${dealYmd} 실패:`,
           err.message
         );
       }
     }
 
-    records.sort((a, b) => b.dealDate.localeCompare(a.dealDate));
+    const mergedRecords = mergeAndPruneTrades(
+      existingFile?.items,
+      newRecords,
+      cutoffDate
+    );
 
+    const fullSigunguName = `${areaInfo.sido} ${areaInfo.sigungu}`;
+
+    // Minify 저장 (들여쓰기 제거로 30~40% 용량 절감)
     await fs.writeFile(
-      path.join(APT_DIR, `${sigungu.code}.json`),
-      JSON.stringify(
-        {
-          updatedAt: new Date().toISOString(),
-          sigunguCode: sigungu.code,
-          sigunguName: sigungu.name,
-          count: records.length,
-          items: records,
-        },
-        null,
-        2
-      ),
+      filePath,
+      JSON.stringify({
+        updatedAt: new Date().toISOString(),
+        sigunguCode: areaInfo.code,
+        sigunguName: fullSigunguName,
+        sido: areaInfo.sido,
+        sigungu: areaInfo.sigungu,
+        count: mergedRecords.length,
+        items: mergedRecords,
+      }),
       "utf8"
     );
 
+    // 검색 인덱스용 단지별 최신 정상 거래 1건 추출
     const seen = new Set();
-    for (const r of records) {
+    for (const r of mergedRecords) {
       if (r.cancelYn) continue;
       const key = `${r.dong}|${r.name}`;
       if (seen.has(key)) continue;
       seen.add(key);
       searchCandidates.push({
-        id: makeRouteComplexId("apt", sigungu.code, r.dong, r.name),
+        id: makeRouteComplexId(kind, areaInfo.code, r.dong, r.name),
         name: r.name,
-        region: sigungu.name,
+        sido: areaInfo.sido,
+        sigungu: areaInfo.sigungu,
         dong: r.dong,
         latestPrice: r.price,
-        dealDate: r.dealDate,
-        type: "apt",
+        type: kind,
       });
     }
   }
 
   console.log(
-    `[2/3] 아파트 실거래가 저장 완료 (검색 인덱스 ${searchCandidates.length}개 단지)`
-  );
-  return searchCandidates;
-}
-
-/**
- * 3. 국토교통부 오피스텔매매 실거래가 자료 (RTMSDataSvcOffiTrade)
- */
-async function syncOfficetelTrades(months) {
-  console.log(
-    `[3/3] 국토부 오피스텔 실거래가 수집 시작 (${SIGUNGU_CODES.length}개 시군구 × ${months.length}개월)...`
-  );
-  const keyParam = buildServiceKeyParam(API_KEY);
-  const searchCandidates = [];
-
-  for (const sigungu of SIGUNGU_CODES) {
-    const records = [];
-
-    for (const dealYmd of months) {
-      const url =
-        `https://apis.data.go.kr/1613000/RTMSDataSvcOffiTrade/getRTMSDataSvcOffiTrade` +
-        `?serviceKey=${keyParam}&LAWD_CD=${sigungu.code}&DEAL_YMD=${dealYmd}&pageNo=1&numOfRows=1000`;
-
-      try {
-        const text = await fetchWithRetry(
-          url,
-          `OFFICETEL ${sigungu.name}(${sigungu.code}) ${dealYmd}`
-        );
-        const items = extractRtmsItems(text);
-
-        for (const item of items) {
-          const name = String(item.offiNm ?? item.단지 ?? "").trim();
-          const dong = String(item.umdNm ?? item.법정동 ?? "").trim();
-          const buildYear = parseIntClean(item.buildYear ?? item.건축년도);
-          const area = parseFloatClean(item.excluUseAr ?? item.전용면적);
-          const floor = parseIntClean(item.floor ?? item.층);
-          const price = parseIntClean(item.dealAmount ?? item.거래금액);
-          const year = String(item.dealYear ?? item.년 ?? "").trim();
-          const month = pad2(item.dealMonth ?? item.월);
-          const day = pad2(item.dealDay ?? item.일);
-          const dealDate = year ? `${year}-${month}-${day}` : "";
-          const dealType = String(item.dealingGbn ?? item.거래유형 ?? "").trim();
-          const cdealType = String(item.cdealType ?? item.해제여부 ?? "").trim();
-          const cancelYn = cdealType === "O" || cdealType === "Y";
-
-          if (!name || price <= 0) continue;
-
-          records.push({
-            id: `${sigungu.code}-${makeShortHash(`${dong}|${name}`)}`,
-            name,
-            dong,
-            buildYear,
-            area,
-            floor,
-            price,
-            dealDate,
-            dealType,
-            cancelYn,
-          });
-        }
-      } catch (err) {
-        console.error(
-          `[ERROR] OFFICETEL ${sigungu.name}(${sigungu.code}) ${dealYmd} 실패:`,
-          err.message
-        );
-      }
-    }
-
-    records.sort((a, b) => b.dealDate.localeCompare(a.dealDate));
-
-    await fs.writeFile(
-      path.join(OFFICETEL_DIR, `${sigungu.code}.json`),
-      JSON.stringify(
-        {
-          updatedAt: new Date().toISOString(),
-          sigunguCode: sigungu.code,
-          sigunguName: sigungu.name,
-          count: records.length,
-          items: records,
-        },
-        null,
-        2
-      ),
-      "utf8"
-    );
-
-    const seen = new Set();
-    for (const r of records) {
-      if (r.cancelYn) continue;
-      const key = `${r.dong}|${r.name}`;
-      if (seen.has(key)) continue;
-      seen.add(key);
-      searchCandidates.push({
-        id: makeRouteComplexId("officetel", sigungu.code, r.dong, r.name),
-        name: r.name,
-        region: sigungu.name,
-        dong: r.dong,
-        latestPrice: r.price,
-        dealDate: r.dealDate,
-        type: "officetel",
-      });
-    }
-  }
-
-  console.log(
-    `[3/3] 오피스텔 실거래가 저장 완료 (검색 인덱스 ${searchCandidates.length}개 단지)`
+    `[${isApt ? "2/3" : "3/3"}] ${label} 저장 완료 (검색 인덱스 ${searchCandidates.length}개 단지)`
   );
   return searchCandidates;
 }
@@ -490,36 +450,35 @@ async function main() {
   await fs.mkdir(APT_DIR, { recursive: true });
   await fs.mkdir(OFFICETEL_DIR, { recursive: true });
 
-  const months = getRecentMonths(3);
+  const months = getRecentMonths(FETCH_MONTHS);
+  const cutoffDate = getRetentionCutoffDate(RETENTION_MONTHS);
   console.log(
-    `=== 부동산 공공데이터 동기화 시작 (대상 월: ${months.join(", ")}) ===`
+    `=== 전국 ${SIGUNGU_CODES.length}개 시군구 공공데이터 증분 동기화 시작 (호출 월: ${months.join(", ")}, 보존 기준: ${cutoffDate}~) ===`
   );
 
   const subscriptions = await syncSubscriptions();
-  const aptIndex = await syncAptTrades(months);
-  const officetelIndex = await syncOfficetelTrades(months);
+  const aptIndex = await syncTradeCategory("apt", months, cutoffDate);
+  const officetelIndex = await syncTradeCategory("officetel", months, cutoffDate);
 
   const subIndex = subscriptions.map((s) => ({
     id: s.id,
     name: s.name,
-    region: s.region,
+    sido: s.region,
+    sigungu: "",
     dong: s.address,
     latestPrice: 0,
-    dealDate: s.applyStart,
     type: "sub",
   }));
 
   const searchIndex = [...aptIndex, ...officetelIndex, ...subIndex];
+  const indexJson = JSON.stringify(searchIndex);
+  const indexSizeKB = (Buffer.byteLength(indexJson, "utf8") / 1024).toFixed(1);
 
-  await fs.writeFile(
-    path.join(DATA_DIR, "search-index.json"),
-    JSON.stringify(searchIndex),
-    "utf8"
-  );
+  await fs.writeFile(path.join(DATA_DIR, "search-index.json"), indexJson, "utf8");
 
   const elapsedSec = ((Date.now() - startedAt) / 1000).toFixed(1);
   console.log(
-    `=== 동기화 완료 (${elapsedSec}초 소요, search-index 총 ${searchIndex.length}건) ===`
+    `=== 동기화 완료 (${elapsedSec}초 소요, search-index 총 ${searchIndex.length}건, ${indexSizeKB} KB) ===`
   );
 }
 

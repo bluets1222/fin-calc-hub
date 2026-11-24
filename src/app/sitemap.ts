@@ -1,8 +1,12 @@
 import type { MetadataRoute } from "next";
 import { GUIDES } from "@/data/guides";
+import {
+  getSubscriptionsData,
+  getTopComplexStaticParams,
+} from "@/lib/real-estate-data";
 import { SITE_URL } from "@/lib/site";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
 
   const staticRoutes: Array<{
@@ -47,6 +51,27 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.75,
   }));
 
+  const [subscriptionsData, topComplexes] = await Promise.all([
+    getSubscriptionsData(),
+    getTopComplexStaticParams(300),
+  ]);
+
+  const subscriptionRoutes: MetadataRoute.Sitemap = (
+    subscriptionsData?.items ?? []
+  ).map((sub) => ({
+    url: `${SITE_URL}/subscription/${sub.id}`,
+    lastModified: now,
+    changeFrequency: "daily",
+    priority: 0.8,
+  }));
+
+  const complexRoutes: MetadataRoute.Sitemap = topComplexes.map((c) => ({
+    url: `${SITE_URL}/real-estate/${encodeURIComponent(c.id)}`,
+    lastModified: now,
+    changeFrequency: "daily",
+    priority: 0.8,
+  }));
+
   return [
     ...staticRoutes.map((route) => ({
       url: `${SITE_URL}${route.path}`,
@@ -55,5 +80,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: route.priority,
     })),
     ...guideRoutes,
+    ...subscriptionRoutes,
+    ...complexRoutes,
   ];
 }

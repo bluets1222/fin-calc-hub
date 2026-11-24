@@ -1,10 +1,8 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { AdSlot } from "@/components/AdSlot";
-import {
-  CalculatorSeoGuide,
-  type CalculatorSeoGuideData,
-} from "@/components/CalculatorSeoGuide";
+import { CalculatorSeoGuide, type CalculatorSeoGuideData } from "@/components/CalculatorSeoGuide";
+import { CalculatorSubTabs } from "@/components/calculators/CalculatorSubTabs";
 import type { BreadcrumbEntry, FaqEntry } from "@/components/seo/JsonLd";
 import { LAST_UPDATED, TAX_YEAR } from "@/constants/rates";
 
@@ -38,7 +36,10 @@ export function CalculatorShell({
   relatedGuide,
 }: CalculatorShellProps) {
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 sm:py-10">
+    <div className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
+      {/* Quick Calculator Sub-Tab Bar */}
+      <CalculatorSubTabs />
+
       {/* Breadcrumb */}
       <nav aria-label="현재 위치" className="mb-4 flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
         {breadcrumbs.map((crumb, idx) => {

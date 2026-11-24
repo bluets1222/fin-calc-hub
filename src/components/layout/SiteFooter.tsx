@@ -7,11 +7,18 @@ import {
   SITE_NAME,
 } from "@/lib/site";
 
+const REAL_ESTATE_LOOKUP_NAV = [
+  { label: "청약 분양정보 조회", href: "/subscription" },
+  { label: "아파트 실거래가 조회", href: "/real-estate?type=apt" },
+  { label: "오피스텔 실거래가 조회", href: "/real-estate?type=officetel" },
+];
+
 export function SiteFooter() {
   return (
     <footer className="mt-auto border-t border-slate-200 bg-slate-900 text-slate-300">
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          {/* 1열: 브랜드 소개 */}
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <span className="flex h-7 w-7 items-center justify-center rounded-md bg-white text-xs font-bold text-slate-900">
@@ -20,8 +27,9 @@ export function SiteFooter() {
               <span className="text-base font-bold text-white">{SITE_NAME}</span>
             </div>
             <p className="text-xs leading-relaxed text-slate-400">
-              한국 사용자를 위한 부동산·세금·금융 통합 계산기 허브입니다. 모든
-              연산은 서버 전송 없이 브라우저 내에서 안전하게 처리됩니다.
+              전국 아파트·오피스텔 실거래가 및 청약 분양정보 조회부터
+              취득세·중개보수·DSR 대출 한도까지 한 번에 계산하는 스마트
+              부동산·금융 허브입니다.
             </p>
             <p className="text-xs text-slate-400">
               문의:{" "}
@@ -34,9 +42,29 @@ export function SiteFooter() {
             </p>
           </div>
 
+          {/* 2열: 부동산 조회 */}
           <div>
             <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
-              통합 계산기 (8종)
+              부동산 조회
+            </h3>
+            <ul className="space-y-2 text-sm">
+              {REAL_ESTATE_LOOKUP_NAV.map((item) => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className="text-slate-300 transition-colors hover:text-white"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* 3열: 세금·금융 계산기 (8종) */}
+          <div>
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+              세금·금융 계산기 (8종)
             </h3>
             <ul className="space-y-1.5 text-sm">
               {CALCULATOR_NAV.map((item) => (
@@ -52,58 +80,61 @@ export function SiteFooter() {
             </ul>
           </div>
 
-          <div>
-            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
-              운영 정책 및 가이드
-            </h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link
-                  href="/guide"
-                  className="text-slate-300 transition-colors hover:text-white"
-                >
-                  세무·금융 가이드
-                </Link>
-              </li>
-              {POLICY_NAV.map((item) => (
-                <li key={item.href}>
+          {/* 4열: 운영 정책 및 가이드 + BEESVIA 패밀리 사이트 */}
+          <div className="space-y-6">
+            <div>
+              <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                운영 정책 및 가이드
+              </h3>
+              <ul className="space-y-2 text-sm">
+                <li>
                   <Link
-                    href={item.href}
+                    href="/guide"
                     className="text-slate-300 transition-colors hover:text-white"
                   >
-                    {item.label}
+                    세무·금융 가이드
                   </Link>
                 </li>
-              ))}
-            </ul>
-          </div>
+                {POLICY_NAV.map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className="text-slate-300 transition-colors hover:text-white"
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          <div>
-            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
-              Beesvia 패밀리 사이트
-            </h3>
-            <ul className="space-y-2.5 text-sm">
-              {FAMILY_SITES.map((site) => (
-                <li key={site.href}>
-                  <a
-                    href={site.href}
-                    target="_blank"
-                    rel="noopener"
-                    className="group block rounded-lg border border-slate-800 bg-slate-800/50 p-2.5 transition-colors hover:border-slate-700 hover:bg-slate-800"
-                  >
-                    <div className="flex items-center justify-between font-medium text-slate-100">
-                      <span>{site.name}</span>
-                      <span className="text-xs text-slate-400 group-hover:text-white">
-                        ↗
-                      </span>
-                    </div>
-                    <p className="mt-0.5 text-xs text-slate-400">
-                      {site.description}
-                    </p>
-                  </a>
-                </li>
-              ))}
-            </ul>
+            <div>
+              <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                BEESVIA 패밀리 사이트
+              </h3>
+              <ul className="space-y-2.5 text-sm">
+                {FAMILY_SITES.map((site) => (
+                  <li key={site.href}>
+                    <a
+                      href={site.href}
+                      target="_blank"
+                      rel="noopener"
+                      className="group block rounded-lg border border-slate-800 bg-slate-800/50 p-2.5 transition-colors hover:border-slate-700 hover:bg-slate-800"
+                    >
+                      <div className="flex items-center justify-between font-medium text-slate-100">
+                        <span>{site.name}</span>
+                        <span className="text-xs text-slate-400 group-hover:text-white">
+                          ↗
+                        </span>
+                      </div>
+                      <p className="mt-0.5 text-xs text-slate-400">
+                        {site.description}
+                      </p>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
 
