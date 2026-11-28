@@ -13,7 +13,7 @@ import { DSR_FAQS } from "@/lib/calculators/dsr";
 import { SITE_URL } from "@/lib/site";
 
 const PAGE_PATH = "/finance/dsr";
-const PAGE_TITLE = "주담대·신용대출 DSR 및 월 상환액 계산기 (스트레스 DSR)";
+const PAGE_TITLE = "[2026년 최신] 주담대·신용대출 DSR 및 월 상환액 계산기 (스트레스 DSR)";
 const PAGE_DESCRIPTION =
   "연소득, 대출금액, 금리, 기간, 상환 방식(원리금균등·원금균등) 및 스트레스 DSR 가산금리(0%·0.75%·1.5%)를 반영해 예상 DSR 비율과 추가 대출 가능 여력을 계산하세요.";
 

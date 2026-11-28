@@ -12,7 +12,7 @@ import { SEVERANCE_FAQS } from "@/lib/calculators/severance";
 import { SITE_URL } from "@/lib/site";
 
 const PAGE_PATH = "/salary/severance";
-const PAGE_TITLE = "퇴직금 모의 계산기 (평균임금·통상임금 비교·퇴직소득세)";
+const PAGE_TITLE = "[2026년 최신] 퇴직금 모의 계산기 (평균임금·통상임금 비교·퇴직소득세)";
 const PAGE_DESCRIPTION =
   "입사일·퇴사일 재직일수 자동 계산, 퇴직 전 3개월 급여·상여금·연차수당 기반 1일 평균임금과 통상임금 비교, 근속연수 공제 반영 세후 실수령 퇴직금을 계산합니다.";
 

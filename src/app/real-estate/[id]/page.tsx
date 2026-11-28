@@ -21,7 +21,7 @@ import {
   formatManwonPrice,
   sqmToPyeong,
 } from "@/lib/real-estate-seo";
-import { SITE_URL } from "@/lib/site";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
 
 export async function generateStaticParams() {
   return getTopComplexStaticParams(300);
@@ -37,25 +37,16 @@ export async function generateMetadata({
     return { title: "단지 정보를 찾을 수 없습니다" };
   }
 
-  const priceText = formatManwonPrice(detail.latestPrice);
-  const pyeong = sqmToPyeong(detail.latestArea);
-  const diffText =
-    detail.diffPercentFromDong === 0
-      ? `${detail.dongName} 평균 시세 수준`
-      : detail.diffPercentFromDong > 0
-        ? `${detail.dongName} 평균 대비 +${detail.diffPercentFromDong}%`
-        : `${detail.dongName} 평균 대비 ${detail.diffPercentFromDong}%`;
-
-  const title = `${detail.name} 실거래가 추이 및 취득세·DSR 대출 계산기 | 비즈비아`;
-  const description = `${detail.sigunguName} ${detail.dongName} ${detail.name} 최근 실거래가 ${priceText} (전용 ${detail.latestArea}㎡ · 약 ${pyeong}평, ${diffText}). 실거래 내역과 취득세·중개보수·DSR 대출 한도를 바로 계산하세요.`;
+  const fullTitle = `[2026년] ${detail.dongName} ${detail.name} 실거래가 추이 및 취득세·필요연봉 계산기 | ${SITE_NAME}`;
+  const description = `${detail.sigunguName} ${detail.dongName} ${detail.name} 최근 실거래가 변동 추이와 평형별 취득세·중개보수·대출 한도를 즉시 모의 계산해 보세요.`;
   const pagePath = `/real-estate/${detail.id}`;
 
   return {
-    title,
+    title: { absolute: fullTitle },
     description,
     alternates: { canonical: pagePath },
     openGraph: {
-      title,
+      title: fullTitle,
       description,
       url: `${SITE_URL}${pagePath}`,
       type: "website",

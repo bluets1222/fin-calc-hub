@@ -14,7 +14,7 @@ import { formatKoreanUnit } from "@/lib/format";
 import { SITE_URL } from "@/lib/site";
 
 const PAGE_PATH = "/real-estate/brokerage-fee";
-const PAGE_TITLE = "부동산 중개보수·복비 계산기 (매매·전세·월세·부가세)";
+const PAGE_TITLE = "[2026년 최신] 부동산 중개보수·복비 계산기 (매매·전세·월세·부가세)";
 const PAGE_DESCRIPTION =
   "아파트·주택·오피스텔·상가 매매 및 전월세 중개보수(복비) 상한요율과 한도액, 월세 환산보증금, 협의 요율, 부가가치세(10%·4%·면세) 포함 총 예상 비용을 계산합니다.";
 

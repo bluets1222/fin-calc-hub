@@ -13,7 +13,7 @@ import { ACQUISITION_TAX_FAQS } from "@/lib/calculators/acquisition-tax";
 import { SITE_URL } from "@/lib/site";
 
 const PAGE_PATH = "/real-estate/acquisition-tax";
-const PAGE_TITLE = "부동산 취득세 계산기 (주택·오피스텔·생애최초 감면)";
+const PAGE_TITLE = "[2026년 최신] 부동산 취득세 계산기 (주택·오피스텔·생애최초 감면)";
 const PAGE_DESCRIPTION =
   "주택·오피스텔 취득가액, 보유 주택 수(1~3주택 이상), 조정대상지역 여부, 생애최초 최대 200만 원 감면 및 전용면적 85㎡ 기준 지방교육세·농어촌특별세를 즉시 계산하세요.";
 

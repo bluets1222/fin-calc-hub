@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AdSlot } from "@/components/AdSlot";
 import {
   calculateAcquisitionTax,
@@ -27,6 +27,47 @@ export function AcquisitionTaxCalculator() {
   const [isRegulatedArea, setIsRegulatedArea] = useState<boolean>(false);
   const [isFirstHome, setIsFirstHome] = useState<boolean>(false);
   const [areaType, setAreaType] = useState<AreaType>("under85");
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    const sp = new URLSearchParams(window.location.search);
+    const qType = sp.get("type");
+    const qPrice = Number(sp.get("price"));
+    const qHouse = sp.get("house");
+    const qArea = sp.get("area");
+    const qReg = sp.get("reg");
+    const qFirst = sp.get("first");
+
+    if (qType === "house" || qType === "officetel") setPropertyType(qType);
+    if (Number.isFinite(qPrice) && qPrice > 0) setPrice(Math.round(qPrice));
+    if (qHouse === "1" || qHouse === "2" || qHouse === "3plus") {
+      setHouseCount(qHouse);
+    } else if (qHouse === "3+") {
+      setHouseCount("3plus");
+    }
+    if (qArea === "under85" || qArea === "over85") {
+      setAreaType(qArea);
+    } else if (Number.isFinite(Number(qArea)) && Number(qArea) > 0) {
+      setAreaType(Number(qArea) <= 85 ? "under85" : "over85");
+    }
+    if (qReg === "1") setIsRegulatedArea(true);
+    if (qFirst === "1") setIsFirstHome(true);
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    const url = new URL(window.location.href);
+    url.searchParams.set("type", propertyType);
+    url.searchParams.set("price", String(Math.round(price)));
+    url.searchParams.set("house", houseCount);
+    url.searchParams.set("area", areaType);
+    if (isRegulatedArea) url.searchParams.set("reg", "1");
+    else url.searchParams.delete("reg");
+    if (isFirstHome) url.searchParams.set("first", "1");
+    else url.searchParams.delete("first");
+    window.history.replaceState(null, "", url.pathname + url.search);
+  }, [hydrated, propertyType, price, houseCount, areaType, isRegulatedArea, isFirstHome]);
 
   const result = useMemo(
     () =>

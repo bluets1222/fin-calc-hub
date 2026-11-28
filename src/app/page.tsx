@@ -111,6 +111,41 @@ export default async function HomePage() {
           </div>
 
           <HomeHeroSearch />
+
+          {/* 인기·마감임박 롱테일 내부 링크 칩 */}
+          <div className="mt-5 flex flex-wrap items-center gap-2">
+            <span className="text-xs font-semibold text-slate-400">
+              인기 바로가기:
+            </span>
+            {highlightSubs.slice(0, 3).map((sub) => (
+              <Link
+                key={sub.id}
+                href={`/subscription/${sub.id}`}
+                className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-medium text-emerald-200 transition-colors hover:bg-white/20 hover:text-white"
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                <span>{sub.name}</span>
+              </Link>
+            ))}
+            <Link
+              href="/real-estate/acquisition-tax"
+              className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-slate-200 transition-colors hover:bg-white/15 hover:text-white"
+            >
+              2026 취득세 계산기
+            </Link>
+            <Link
+              href="/finance/dsr"
+              className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-slate-200 transition-colors hover:bg-white/15 hover:text-white"
+            >
+              DSR 대출 한도 계산기
+            </Link>
+            <Link
+              href="/salary/net-pay"
+              className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-slate-200 transition-colors hover:bg-white/15 hover:text-white"
+            >
+              2026 연봉 실수령액
+            </Link>
+          </div>
         </div>
       </section>
 

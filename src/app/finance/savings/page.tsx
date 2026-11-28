@@ -13,7 +13,7 @@ import { SAVINGS_FAQS } from "@/lib/calculators/savings";
 import { SITE_URL } from "@/lib/site";
 
 const PAGE_PATH = "/finance/savings";
-const PAGE_TITLE = "예금·적금 세후이자 계산기 (단리·월복리·비과세 비교)";
+const PAGE_TITLE = "[2026년 최신] 예금·적금 세후이자 계산기 (단리·월복리·비과세 비교)";
 const PAGE_DESCRIPTION =
   "정기예금·정기적금 가입 금액, 기간, 연 이자율, 단리·월복리 및 과세 구분(일반과세 15.4%·세금우대 1.4%·비과세 0%)을 반영해 세후 만기 수령액과 절세 효과를 계산합니다.";
 

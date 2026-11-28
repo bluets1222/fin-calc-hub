@@ -106,7 +106,20 @@ export function EmbeddedFinanceCalculator({
       setCopiedLink(true);
       setTimeout(() => setCopiedLink(false), 2000);
     } catch {
-      setCopiedLink(false);
+      try {
+        const textarea = document.createElement("textarea");
+        textarea.value = url;
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+        setCopiedLink(true);
+        setTimeout(() => setCopiedLink(false), 2000);
+      } catch {
+        setCopiedLink(false);
+      }
     }
   }
 
@@ -160,7 +173,7 @@ export function EmbeddedFinanceCalculator({
                   : "border border-white/25 bg-white/10 text-white hover:bg-white/20"
               }`}
             >
-              {copiedLink ? "계산 링크 복사됨!" : "현재 계산 링크 복사"}
+              {copiedLink ? "링크 복사 완료!" : "계산 결과 링크 복사"}
             </button>
             <button
               type="button"

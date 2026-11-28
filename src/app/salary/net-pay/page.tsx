@@ -14,7 +14,7 @@ import { formatKoreanUnit } from "@/lib/format";
 import { SITE_URL } from "@/lib/site";
 
 const PAGE_PATH = "/salary/net-pay";
-const PAGE_TITLE = "연봉 실수령액 계산기 (4대보험·근로소득세·비과세 반영)";
+const PAGE_TITLE = "[2026년 최신] 연봉 실수령액 계산기 (4대보험·근로소득세·비과세 반영)";
 const PAGE_DESCRIPTION =
   "연봉 또는 월급, 비과세 식대(20만 원), 부양가족 수, 20세 이하 자녀 수를 입력해 국민연금(상한액 반영)·건강보험·고용보험·근로소득세 공제 후 월 예상 실수령액을 계산합니다.";
 

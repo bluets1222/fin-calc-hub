@@ -51,16 +51,28 @@ export default async function SubscriptionListPage() {
           </div>
           <div className="flex flex-wrap gap-2">
             <Link
+              href="/real-estate"
+              className="rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs font-semibold text-slate-800 hover:bg-slate-50 sm:text-sm"
+            >
+              실거래가 조회 →
+            </Link>
+            <Link
               href="/real-estate/acquisition-tax"
-              className="rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-semibold text-white hover:bg-blue-500 sm:text-sm"
+              className="rounded-xl bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-500 sm:text-sm"
             >
               취득세 계산기 →
             </Link>
             <Link
               href="/finance/dsr"
-              className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-xs font-semibold text-slate-800 hover:bg-slate-50 sm:text-sm"
+              className="rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs font-semibold text-slate-800 hover:bg-slate-50 sm:text-sm"
             >
               DSR 한도 계산기 →
+            </Link>
+            <Link
+              href="/salary/net-pay"
+              className="rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs font-semibold text-slate-800 hover:bg-slate-50 sm:text-sm"
+            >
+              연봉 실수령액 →
             </Link>
           </div>
         </header>

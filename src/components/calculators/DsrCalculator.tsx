@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AdSlot } from "@/components/AdSlot";
 import {
   calculateDsr,
@@ -36,6 +36,38 @@ export function DsrCalculator() {
   const [stressRate, setStressRate] = useState<StressRateOption>(0.75);
   const [existingAnnualDebtService, setExistingAnnualDebtService] =
     useState<number>(0);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    const sp = new URLSearchParams(window.location.search);
+    const qIncome = Number(sp.get("income"));
+    const qLoan = Number(sp.get("loan"));
+    const qPrice = Number(sp.get("price"));
+    const qRate = Number(sp.get("rate"));
+    const qYears = Number(sp.get("years"));
+    const qStress = Number(sp.get("stress"));
+
+    if (Number.isFinite(qIncome) && qIncome > 0) setAnnualIncome(Math.round(qIncome));
+    if (Number.isFinite(qLoan) && qLoan > 0) setLoanAmount(Math.round(qLoan));
+    else if (Number.isFinite(qPrice) && qPrice > 0) {
+      setLoanAmount(Math.round(qPrice * 0.6));
+    }
+    if (Number.isFinite(qRate) && qRate > 0 && qRate <= 20) setInterestRate(qRate);
+    if (Number.isFinite(qYears) && qYears >= 1 && qYears <= 50) setLoanYears(Math.round(qYears));
+    if (qStress === 0 || qStress === 0.75 || qStress === 1.5) setStressRate(qStress);
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    const url = new URL(window.location.href);
+    url.searchParams.set("income", String(Math.round(annualIncome)));
+    url.searchParams.set("loan", String(Math.round(loanAmount)));
+    url.searchParams.set("rate", String(interestRate));
+    url.searchParams.set("years", String(loanYears));
+    url.searchParams.set("stress", String(stressRate));
+    window.history.replaceState(null, "", url.pathname + url.search);
+  }, [hydrated, annualIncome, loanAmount, interestRate, loanYears, stressRate]);
 
   const result = useMemo(
     () =>

@@ -14,7 +14,7 @@ import { formatKoreanUnit } from "@/lib/format";
 import { SITE_URL } from "@/lib/site";
 
 const PAGE_PATH = "/tax/gift-tax";
-const PAGE_TITLE = "증여세 간편 모의 계산기 (공제한도·10년 합산·자진신고 3%)";
+const PAGE_TITLE = "[2026년 최신] 증여세 간편 모의 계산기 (공제한도·10년 합산·자진신고 3%)";
 const PAGE_DESCRIPTION =
   "배우자(6억), 직계존속(성인 5천만·미성년 2천만), 직계비속, 기타친족 증여재산공제와 10년 이내 기증여 합산, 세대생략 30% 할증, 자진신고 3% 세액공제를 즉시 계산합니다.";
 

@@ -12,7 +12,7 @@ import { LOAN_INTEREST_FAQS } from "@/lib/calculators/loan-interest";
 import { SITE_URL } from "@/lib/site";
 
 const PAGE_PATH = "/finance/loan-interest";
-const PAGE_TITLE = "대출 이자 및 상환 스케줄 계산기 (원리금·원금균등·만기일시)";
+const PAGE_TITLE = "[2026년 최신] 대출 이자 및 상환 스케줄 계산기 (원리금·원금균등·만기일시)";
 const PAGE_DESCRIPTION =
   "대출 원금, 연 이자율, 기간, 거치 기간을 입력해 원리금균등·원금균등·만기일시상환 3가지 방식의 총이자를 한눈에 비교하고 회차별 상환 스케줄을 확인하세요.";
 

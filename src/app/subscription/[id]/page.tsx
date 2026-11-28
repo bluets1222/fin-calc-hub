@@ -18,10 +18,25 @@ import {
   buildRealEstateListingSchema,
   buildSubscriptionSeoGuide,
 } from "@/lib/real-estate-seo";
-import { SITE_URL } from "@/lib/site";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
 
 export async function generateStaticParams() {
   return getActiveSubscriptionStaticParams();
+}
+
+function getSubscriptionStatusTag(sub: {
+  status: "upcoming" | "active" | "closed";
+  houseType?: string;
+}): string {
+  if (
+    sub.houseType &&
+    (sub.houseType.includes("무순위") || sub.houseType.includes("잔여"))
+  ) {
+    return "무순위";
+  }
+  if (sub.status === "active") return "접수중";
+  if (sub.status === "upcoming") return "청약예정";
+  return "접수마감";
 }
 
 export async function generateMetadata({
@@ -34,16 +49,17 @@ export async function generateMetadata({
     return { title: "청약 공고 정보를 찾을 수 없습니다" };
   }
 
-  const title = `${sub.name} 청약 일정·분양 정보 및 취득세·대출(DSR) 계산기 | 비즈비아 부동산`;
-  const description = `${sub.region} ${sub.name} (총 ${sub.totalCount.toLocaleString("ko-KR")}세대) 청약 접수 ${sub.applyStart}~${sub.applyEnd}. 분양 자금 계획 및 취득세·스트레스 DSR 한도를 바로 계산하세요.`;
+  const statusTag = getSubscriptionStatusTag(sub);
+  const fullTitle = `[${statusTag}] ${sub.name} 분양가·필요현금·DSR 대출한도 계산 (2026년) | ${SITE_NAME}`;
+  const description = `${sub.region} ${sub.name} 청약 일정(${sub.applyStart}~${sub.applyEnd}), 평형별 분양가, 취득세 및 DSR 40% 기준 필요 연봉·현금을 한 번에 계산해 보세요.`;
   const pagePath = `/subscription/${sub.id}`;
 
   return {
-    title,
+    title: { absolute: fullTitle },
     description,
     alternates: { canonical: pagePath },
     openGraph: {
-      title,
+      title: fullTitle,
       description,
       url: `${SITE_URL}${pagePath}`,
       type: "website",
