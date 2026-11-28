@@ -1,0 +1,52 @@
+name: Auto Indexing (IndexNow & Google)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "public/data/**"
+      - "src/app/**"
+      - "src/data/**"
+  workflow_run:
+    workflows:
+      - "Daily Real Estate Data Sync"
+    types:
+      - completed
+  workflow_dispatch:
+    inputs:
+      google_limit:
+        description: "Google Indexing API 일일 최대 전송 건수 (1~200)"
+        required: false
+        default: "80"
+
+jobs:
+  submit-indexing:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Wait for Vercel deployment propagation
+        run: |
+          echo "Waiting 75s for Vercel production deployment..."
+          sleep 75
+
+      - name: Submit URLs to IndexNow & Google Indexing API
+        env:
+          NEXT_PUBLIC_SITE_URL: https://fin.beesvia.com
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+        run: |
+          LIMIT="${{ github.event.inputs.google_limit || '80' }}"
+          node scripts/auto-indexing.mjs --google-limit="$LIMIT"
